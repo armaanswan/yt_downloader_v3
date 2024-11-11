@@ -9,74 +9,90 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1 class="title">YouTube Downloader</h1>
-        <form class="fetch-details-form">
-            <input class="input" id="url-input" type="url" placeholder="paste link..." required>
-            <input class="input-submit" type="submit" value="Fetch"> <!-- disable while fetching -->
-        </form>
-
-        <form class="download-form">
-            <div class="switcher-heading">Download Options</div>
-            <div class="button-switcher" id="download-options-switcher">
-                <button type="button" class="button active audiovideo">
-                    <img src="/icons/sparkles.svg" alt="audio & video icon" class="icon">
-                    audio + video
-                </button>
-                <button type="button" class="button audio">
-                    <img src="/icons/speaker.wave.2.fill.svg" alt="audio icon" class="icon">
-                    audio
-                </button>
-                <button type="button" class="button video">
-                    <img src="/icons/play.rectangle.fill.svg" alt="video icon" class="icon">
-                    video
-                </button>
+    <h1 class="page-title">YouTube Downloader</h1>
+    <form class="search-form" id="search-form">
+        <input class="search-input" type="url" name="url" id="url" placeholder="paste link..."
+            value="https://www.youtube.com/watch?v=hGia1sD2lCI" required>
+        <input class="button search-button" type="submit" value="Search">
+    </form>
+    <div class="search-helper-buttons">
+        <button class="button small-button" id="paste-button">Paste</button>
+        <button class="button small-button" id="clear-button">Clear</button>
+    </div>
+    <div class="button-switcher global-switcher">
+        <button class="switcher-option audiovideo active">Audio + Video</button>
+        <button class="switcher-option audio">Audio</button>
+        <button class="switcher-option video">Video</button>
+    </div>
+    <div class="options-container video-options-container">
+        <h3 class="title">Video Options</h3>
+        <div class="video-options">
+            <div class="switcher-container">
+                <div class="title">Video Quality</div>
+                <div class="button-switcher" id="video-quality-options">
+                    <div class="switcher-option active">best</div>
+                </div>
             </div>
-            <div class="switcher-heading">Video Quality</div>
-            <div class="button-switcher" id="video-quality-switcher">
-                <button type="button" class="button active" value="2160p">2160p</button>
-                <button type="button" class="button" value="1440p">1440p</button>
-                <button type="button" class="button" value="1080p">1080p</button>
-                <button type="button" class="button" value="720p">720p</button>
-                <button type="button" class="button" value="480p">480p</button>
-                <button type="button" class="button" value="360p">360p</button>
-                <button type="button" class="button" value="144p">144p</button>
+            <div class="switcher-container">
+                <div class="title">Video Bitrate</div>
+                <div class="button-switcher" id="video-bitrate-options">
+                    <div class="switcher-option active">best</div>
+                </div>
             </div>
-            <div class="switcher-heading">Video Formats</div>
-            <div class="button-switcher" id="video-formats-switcher">
-                <button type="button" class="button active" value="H264 (MP4)">H264 (MP4)</button>
-                <button type="button" class="button" value="AV1 (WEBM)">AV1 (WEBM)</button>
-                <button type="button" class="button" value="VP9 (WEBM)">VP9 (WEBM)</button>
+            <div class="switcher-container">
+                <div class="title">Video Format</div>
+                <div class="button-switcher" id="video-format-options">
+                    <div class="switcher-option active">best</div>
+                </div>
             </div>
-            <div class="switcher-heading">Audio Formats</div>
-            <div class="button-switcher" id="audio-formats-switcher">
-                <button type="button" class="button active" value="M4A (AAC)">M4A (AAC)</button>
-                <button type="button" class="button" value="MP3">MP3</button>
-                <button type="button" class="button" value="WAV">WAV</button>
+            <div class="switcher-container">
+                <div class="title">Video Codec</div>
+                <div class="button-switcher" id="video-codec-options">
+                    <div class="switcher-option active">best</div>
+                </div>
             </div>
-            <div class="switcher-heading">Audio Bitrates</div>
-            <div class="button-switcher" id="audio-bitrates-switcher">
-                <button type="button" class="button active" value="320kb/s">320kb/s</button>
-                <button type="button" class="button" value="256kb/s">256kb/s</button>
-                <button type="button" class="button" value="128kb/s">128kb/s</button>
-                <button type="button" class="button" value="96kb/s">96kb/s</button>
-                <button type="button" class="button" value="64kb/s">64kb/s</button>
-                <button type="button" class="button" value="8kb/s">8kb/s</button>
+        </div>
+    </div>
+    <div class="options-container audio-options-container">
+        <h3 class="title">Audio Options</h3>
+        <div class="audio-options">
+            <div class="switcher-container">
+                <div class="title">Audio Bitrate</div>
+                <div class="button-switcher" id="audio-bitrate-options">
+                    <div class="switcher-option active">best</div>
+                </div>
             </div>
-
-            <!-- Make this whole container clickable -->
-            <div class="toggle-container">
-                Remove metadata
-                <input type="checkbox" name="remove-metadata" id="remove-metadata" class="toggle-switch">
+            <!-- <div class="switcher-container">
+                <div class="title">Audio Sample Rate</div>
+                <div class="button-switcher" id="audio-sample-rate-options">
+                    <div class="switcher-option active">best</div>
+                </div>
+            </div> -->
+            <div class="switcher-container">
+                <div class="title">Audio Format</div>
+                <div class="button-switcher" id="audio-format-options">
+                    <div class="switcher-option active">best</div>
+                </div>
             </div>
-
-            <button type="submit" class="download-button">
-                <img src="/icons/square.and.arrow.down.svg" alt="video icon" class="icon">
-                Download
-            </button>
-        </form>
+            <div class="switcher-container">
+                <div class="title">Audio Codec</div>
+                <div class="button-switcher" id="audio-codec-options">
+                    <div class="switcher-option active">best</div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div class="actions">
+        <div class="toggle-container" id="remove-metadata-toggle">
+            <div class="toggle-label">Remove metadata</div>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <button class="button download-button">Download</button>
+    </div>
     <script src="/js/script.js"></script>
 </body>
 

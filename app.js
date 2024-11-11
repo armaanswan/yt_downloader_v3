@@ -1,86 +1,70 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const { exec } = require('child_process');
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 function parseData(rawData) {
-    const lines = rawData.trim().split('\n').slice(8);
+    const data = JSON.parse(rawData);
 
-    const audioLines = lines.filter(line => line.includes('audio only'));
-    const videoLines = lines.filter(line => line.includes('video only'));
+    let parsedFormats = [];
 
-    const audioLeft = audioLines.map(line => line.split('|')[0].trim().split(/\s+/));
-    const audioRight = audioLines.map(line => line.split('|')[2].trim().split(/\s+/));
-    const videoLeft = videoLines.map(line => line.split('|')[0].trim().split(/\s+/));
-    const videoRight = videoLines.map(line => line.split('|')[2].trim().split(/\s+/));
+    data.formats.forEach(format => {
+        let formatData = {
+            id: format.format_id,
+            extension: format.ext,
+            video_resolution: format.height,
+            video_bitrate: Math.floor(format.vbr),
+            video_codec: format.vcodec,
+            video_extension: format.video_ext,
+            audio_bitrate: Math.floor(format.abr),
+            audio_codec: format.acodec,
+            audio_extension: format.audio_ext,
+        };
 
-    const audioData = [];
-    const videoData = [];
-
-    for (i = 0; i < audioLines.length; i++) {
-        let audioObj = {
-            audio_id: audioLeft[i][0],
-            audio_extention: audioLeft[i][1],
-            audio_codec: audioRight[i][2],
-            audio_bitrate: audioRight[i][3],
-            audio_sample_rate: audioRight[i][4]
+        if (!formatData.id.includes('sb')) {
+            parsedFormats.push(formatData);
         }
+    });
 
-        if (audioObj.audio_codec !== 'unknown') {
-            audioData.push(audioObj);
-        }
-    }
-
-    for (i = 0; i < videoLines.length; i++) {
-        let videoObj = {
-            video_id: videoLeft[i][0],
-            video_resolution: videoLeft[i][2],
-            video_extention: videoLeft[i][1],
-            video_codec: videoRight[i][0],
-            video_bitrate: videoRight[i][1]
-        }
-
-        videoData.push(videoObj);
-    }
-
-    const data = audioData.concat(videoData);
-    return data;
+    return parsedFormats;
 }
 
 // Function to fetch video formats using yt-dlp
 function fetchData(url, callback) {
-    const command = `yt-dlp -F ${url}`;
+    const command = `yt-dlp --skip-download --print-json "${url}"`;
 
+    console.log("Executing exec command... with command: ", command);
     exec(command, (err, stdout, stderr) => {
         if (err) {
+            console.log("The error you are looking for is: ", err);
             callback(err, null);
             return;
         }
 
+        console.log("Trying to parse data!");
         data = parseData(stdout);
         callback(null, data);
     });
 }
 
 // Define a route to handle fetching formats
-app.get('/fetch', (req, res) => {
-    const videoUrl = req.query.url;
+app.post('/fetch', (req, res) => {
+    const videoUrl = req.body.url;
 
     fetchData(videoUrl, (err, data) => {
         if (err) {
             res.status(500).json({ error: 'Failed to fetch data' });
             return;
         }
-        res.json({ data });
+        res.json(data);
     });
 });
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { data: null });
 });
 
 app.listen(3000, () => {
